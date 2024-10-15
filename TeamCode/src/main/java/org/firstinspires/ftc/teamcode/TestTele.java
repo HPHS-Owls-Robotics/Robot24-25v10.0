@@ -72,7 +72,8 @@ public class TestTele extends LinearOpMode {
             //slide.setPower(10);
             DcMotor[] motors = {FRMotor, FLMotor, BLMotor, BRMotor/*,Slide*/};
             for (int i = 0; i < 4; i++) {
-                motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motors.[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                //motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                //   motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
