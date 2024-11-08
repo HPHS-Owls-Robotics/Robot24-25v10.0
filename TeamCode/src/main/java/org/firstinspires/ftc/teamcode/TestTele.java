@@ -29,11 +29,10 @@ public class TestTele extends LinearOpMode {
 //    private float cfr = 1.5f;
 //    private float cbl = 3.0f;
 //    private float cbr = 3.0f;
-    private float cfl = 2.0f;
-    private float cfr = 0.2f; //was 0.8f
-    private float cbl = 2.3f; //was 1.3f
-    private float cbr = 2.0f; //was 1.4f
-
+    private float cfl = 0.4f;
+    private float cfr = 0.4f; //was 0.8f
+    private float cbl = 0.4f;
+    private float cbr = 0.4f;
     @Override
 
     public void runOpMode() throws InterruptedException {
@@ -54,7 +53,7 @@ public class TestTele extends LinearOpMode {
 //booleans
         boolean isBeamBroke;
         FLMotor.setDirection(DcMotor.Direction.FORWARD);
-        FRMotor.setDirection(DcMotor.Direction.FORWARD);
+        FRMotor.setDirection(DcMotor.Direction.REVERSE);
         BLMotor.setDirection(DcMotor.Direction.FORWARD);
         BRMotor.setDirection(DcMotor.Direction.REVERSE);
 
@@ -72,8 +71,7 @@ public class TestTele extends LinearOpMode {
             //slide.setPower(10);
             DcMotor[] motors = {FRMotor, FLMotor, BLMotor, BRMotor/*,Slide*/};
             for (int i = 0; i < 4; i++) {
-                motors.[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                //motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motors[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                //   motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
@@ -88,34 +86,50 @@ public class TestTele extends LinearOpMode {
             strafe = gamepad1.left_stick_x;
             rotate = gamepad1.right_stick_x;
 
-//            FLPwr = (cfl)*(yleft + yright - strafe + rotate)/4f; //cfl for possible coeffs to deal with weight distr
-//            FRPwr = (cfr)*(yleft + yright + strafe - rotate)/4f; //cfr for possible coeffs to deal with weight distr
-//            BLPwr = (cbl)*(yleft + yright + strafe + rotate)/4f; //cbl for possible coeffs to deal with weight distr
-//            BRPwr = (cbr)*(yleft + yright - strafe - rotate)/4f; //cbr for possible coeffs to deal with weight distr
-            FLPwr= yleft-strafe-rotate;
-            FRPwr= yleft+strafe+rotate;
-            BLPwr= yleft+strafe-rotate;
-            BRPwr= yleft-strafe+rotate;
 
+            FLPwr =cfl*(yleft + yright - strafe - rotate); //cfl for possible coeffs to deal with weight distr
+            FRPwr =cfr* (yleft + yright + strafe + rotate); //cfr for possible coeffs to deal with weight distr
+            BLPwr =cbl* (yleft + yright + strafe - rotate); //cbl for possible coeffs to deal with weight distr
+            BRPwr = cbr* (yleft + yright - strafe + rotate); //cbr for possible coeffs to deal with weight distr
+//            FLPwr= cfl*(yright-strafe-rotate);
+//            FRPwr= cfr*(yright+strafe+rotate);
+//            BLPwr= cbl*(yright+strafe-rotate);
+//            BRPwr= cbr*(yright-strafe);
+//DRIVETRAIN*************************************************************************************************************************************
             FLMotor.setPower(FLPwr);
             FRMotor.setPower(FRPwr);
             BLMotor.setPower(BLPwr);
             BRMotor.setPower(BRPwr);
 
+//            while(gamepad1.dpad_left)
+//            {
+//                FLMotor.setPower(-1);
+//                BLMotor.setPower(1);
+//                FRMotor.setPower(1);
+//                BRMotor.setPower(-1);
+//            }
+//            while(gamepad1.dpad_right)
+//            {
+//                FLMotor.setPower(1);
+//                BLMotor.setPower(-1);
+//                FRMotor.setPower(-1);
+//                BRMotor.setPower(1);
+//            }
 
 
+//SLIDE**********************************************************************************************************************************
             if(gamepad1.left_trigger>0.1)
             {
-                Slide.setTargetPosition(-200);
+                Slide.setTargetPosition(-700);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slide.setPower(0.3);
+                Slide.setPower(0.5);
                 telemetry.addData("NO", Slide.getCurrentPosition());
                 telemetry.update();
 
             }
             if(gamepad1.right_trigger>0.1)
             {
-                Slide.setTargetPosition(0);
+                Slide.setTargetPosition(1050);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Slide.setPower(0.3);
                 telemetry.addData("NO", Slide.getCurrentPosition());
@@ -126,9 +140,9 @@ public class TestTele extends LinearOpMode {
 
             if(gamepad1.left_bumper)
             {
-                Slide.setTargetPosition(-500);
+                Slide.setTargetPosition(-1500);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slide.setPower(-0.3);
+                Slide.setPower(-0.5);
                 telemetry.addData("NO", Slide.getCurrentPosition());
                 telemetry.update();
                 //Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -137,16 +151,15 @@ public class TestTele extends LinearOpMode {
             }
             if(gamepad1.right_bumper)
             {
-                telemetry.addData("STOP PLEASE WORK ALREADY", Slide.getCurrentPosition());
-                telemetry.update();
-                Slide.setTargetPosition(-1100);
-                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slide.setPower(-0.3);
 
+                Slide.setTargetPosition(-3500);
+                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Slide.setPower(-0.5);
                 //Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 // Slide.setPower(0);
 
             }
+            //HORIZONTAL SLIDE***************************************************************************************************************
             while(gamepad1.y)
             {
                 slide.setPower(1);
@@ -156,6 +169,7 @@ public class TestTele extends LinearOpMode {
                 slide.setPower(-1);
                 sleep(500);
             }
+            //SWEEPER**************************************************************************************************************************
             while(gamepad1.b)
             {
                 sweep.setPower(0.5);
@@ -171,7 +185,10 @@ public class TestTele extends LinearOpMode {
 //            Slide.setTargetPosition(Slide.getCurrentPosition());
 //            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            Slide.setPower(-0.9);
-
+//            FLMotor.setPower(0);
+//            BLMotor.setPower(0);
+//            FRMotor.setPower(0);
+//            BRMotor.setPower(0);
 
            // Slide.setPower(0);
             slide.setPower(0);

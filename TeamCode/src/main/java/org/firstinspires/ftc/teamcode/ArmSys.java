@@ -19,19 +19,51 @@ public class ArmSys {
 
 
     public ArmSys(HardwareMap hardwareMap)
-    {}
-    public void sweep(int sleep)
     {
-        sweep.setPower(1);
+        Slide = hardwareMap.dcMotor.get("S_Motor");
+        slide = hardwareMap.crservo.get("slide");
+        sweep = hardwareMap.crservo.get("sweep");
     }
-    public void SlideToRung(int inches)
+    public void sweepIn()
+    {
+        sweep.setPower(-3);
+    }
+    public void sweepOut()
+    {
+        sweep.setPower(3);
+    }
+    public void sweepOff()
+    {
+        sweep.setPower(0);
+    }
+    public void SlideToRung()
+    {
+        Slide(-1500,-0.5f);
+
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Slide.setTargetPosition(-1500);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(-0.5);
+    }
+    public void slideExtend()
+    {
+        slide.setPower(3);
+    }
+    public void SlideToBasket()
+    {
+        Slide(-3300,-0.5f);
+    }
+    public void SlideDown()
+    {
+        Slide(-0,-0.5f);
+    }
+    private void Slide(int ticks, float power)
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Slide.setTargetPosition(-500);
+        Slide.setTargetPosition(ticks);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(-0.5);
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        Slide.setPower(power);
     }
 }
