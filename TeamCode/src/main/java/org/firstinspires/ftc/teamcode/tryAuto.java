@@ -24,7 +24,12 @@ public final class tryAuto extends LinearOpMode {
                 drive.actionBuilder(beginPose)
                         //.lineToY(20)
                         .strafeTo(new Vector2d(45, 60))
+
+
+
                         .build());
+        Pose2d poseOne = new Pose2d(45, 60, 0);
+
 //        Actions.runBlocking(
 //                drive.actionBuilder(beginPose)
 //                        //.lineToY(20)
@@ -40,9 +45,9 @@ public final class tryAuto extends LinearOpMode {
             sleep(3000);
 
         Actions.runBlocking(
-                drive.actionBuilder(beginPose)
+                drive.actionBuilder(poseOne)
                         //.lineToY(20)
-                        .strafeTo(new Vector2d(24, 60))
+                        .strafeTo(new Vector2d(36, 60))
                         .build());
         arm.sweepIn();
         arm.sweepOut();
@@ -50,11 +55,18 @@ public final class tryAuto extends LinearOpMode {
         sleep(2500);
         telemetry.addData("hello", "hello");
         telemetry.update();
+        Pose2d poseTwo = new Pose2d(36, 60, 0);
+
         Actions.runBlocking(
-                drive.actionBuilder(beginPose)
-                        //.lineToY(48)
-                        .strafeTo(new Vector2d(24, 40))
+                drive.actionBuilder(poseTwo)
+                        //.lineToY(20)
+                        .strafeTo(new Vector2d(36, 12))
                         .build());
+//        Actions.runBlocking(
+//                drive.actionBuilder(beginPose)
+//                        //.lineToY(48)
+//                        .strafeTo(new Vector2d(24, 40))
+//                        .build());
 //        Actions.runBlocking(
 //                drive.actionBuilder(beginPose)
 //                        //.lineToY(20)
@@ -119,6 +131,7 @@ public final class tryAuto extends LinearOpMode {
 //        sleep(2000);
 //        arm.sweepOut();
 //        sleep(2000);
+
 
 
     }

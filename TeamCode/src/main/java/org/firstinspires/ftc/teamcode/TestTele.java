@@ -182,6 +182,22 @@ public class TestTele extends LinearOpMode {
                 telemetry.addData("goodbye", "goodbye");
                 telemetry.update();
             }
+            while(gamepad1.dpad_up&&Slide.getCurrentPosition()>-4800)
+            {
+                Slide.setTargetPosition(Slide.getCurrentPosition()-100);
+                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Slide.setPower(-1.0);
+                telemetry.addData("NO", Slide.getCurrentPosition());
+                telemetry.update();
+            }
+            while(gamepad1.dpad_down)
+            {
+                Slide.setTargetPosition(Slide.getCurrentPosition()+100);
+                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Slide.setPower(1.0);
+                telemetry.addData("NO", Slide.getCurrentPosition());
+                telemetry.update();
+            }
 //            Slide.setTargetPosition(Slide.getCurrentPosition());
 //            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            Slide.setPower(-0.9);
@@ -191,8 +207,13 @@ public class TestTele extends LinearOpMode {
 //            BRMotor.setPower(0);
 
            // Slide.setPower(0);
-            slide.setPower(0);
-            sweep.setPower(0);
+            if(!gamepad1.dpad_up&&!gamepad2.dpad_down)
+            {
+                slide.setPower(0);
+                sweep.setPower(0);
+
+            }
+
             //slide.setPower(0);
             //sweep.setPower(0   );
             telemetry.addData("BR", BRMotor.getPower());
