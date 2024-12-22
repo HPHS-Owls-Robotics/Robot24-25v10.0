@@ -81,7 +81,7 @@ public class MoveSysOdo {
 
 
         // drive model parameters
-        public double inPerTick = 30.75/1312;
+        public double inPerTick =0.0018770159653746462;
         public double tickPerIn = 1312/30.75;
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
@@ -102,7 +102,7 @@ public class MoveSysOdo {
     static final float     DRIVE_GEAR_REDUCTION    = 1.0f;
     static final float     WHEEL_DIAMETER_INCHES   = 3.54f;
     static final float     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415f);
-    static final float     DRIVE_SPEED             = 0.3F;
+    static final float     DRIVE_SPEED             = 0.5F;
     static final float     TURN_SPEED              = 0.9f;
     static final float     ARM_SPEED                = 0.4f;
 
@@ -115,10 +115,11 @@ public class MoveSysOdo {
         BLMotor = (DcMotorEx) hardwareMap.dcMotor.get("BL_Motor"); //check with driver hub
         BRMotor = (DcMotorEx) hardwareMap.dcMotor.get("BR_Motor"); //check with driver hub
 
-        FLMotor.setDirection(DcMotor.Direction.REVERSE);
+        FLMotor.setDirection(DcMotor.Direction.FORWARD);
         FRMotor.setDirection(DcMotor.Direction.REVERSE);
-        BLMotor.setDirection(DcMotor.Direction.REVERSE);
-        BRMotor.setDirection(DcMotor.Direction.FORWARD);
+        BLMotor.setDirection(DcMotor.Direction.FORWARD);
+        BRMotor.setDirection(DcMotor.Direction.REVERSE);
+
 
         FLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -147,21 +148,39 @@ public class MoveSysOdo {
         BRMotor.setPower(0);
         return 0;
     }
-    public int right(float inches)
-    {
-        int finalPos = (int) (FRMotor.getCurrentPosition()*tickPerIn);
-        while(FRMotor.getCurrentPosition()!=finalPos)
+    public int right(float inches) {
+        int i = (int) (inches*COUNTS_PER_INCH); //convert inches to ticks
+        int newFL;
+        int newFR;
+        int newBL;
+        int newBR;
+
+        // Determine new target position, and pass to motor controller
+        newFL = FLMotor.getCurrentPosition() - i;
+        newBR = BRMotor.getCurrentPosition() - i;
+
+
+
+        //Turn on RUN_TO_POSITION
+        FLMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BLMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Set power
+        while(!(FLMotor.getCurrentPosition() ==newFL) && !(BRMotor.getCurrentPosition() ==newBR))
         {
-            FLMotor.setPower(DRIVE_SPEED);
-            FRMotor.setPower(DRIVE_SPEED); //too fast
-            BLMotor.setPower(DRIVE_SPEED); //wrong direction
-            BRMotor.setPower(DRIVE_SPEED);
+            FLMotor.setPower(-DRIVE_SPEED);
+            FRMotor.setPower(DRIVE_SPEED);
+            BLMotor.setPower(DRIVE_SPEED);
+            BRMotor.setPower(-DRIVE_SPEED);
         }
         FLMotor.setPower(0);
         FRMotor.setPower(0);
         BLMotor.setPower(0);
         BRMotor.setPower(0);
-        return 0;
+
+        return newFL;
     }
     public int left(float inches)
     {

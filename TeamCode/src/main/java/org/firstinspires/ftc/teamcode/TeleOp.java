@@ -2,16 +2,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Driving", group="12417")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Driving", group="12417")
 
-public class TestTele extends LinearOpMode {
+public class TeleOp extends LinearOpMode {
 
     //declaration
     //DcMotor FLMotor;
@@ -20,8 +17,13 @@ public class TestTele extends LinearOpMode {
     DcMotor BLMotor;
     DcMotor BRMotor;
     DcMotor Slide;
+
+    DcMotor oneHang;
+    DcMotor twoHang;
+
     CRServo slide;
     CRServo sweep;
+    Servo specimen;
 
 
     int FREEZE_SPEED=0;
@@ -33,6 +35,7 @@ public class TestTele extends LinearOpMode {
     private float cfr = 0.4f; //was 0.8f
     private float cbl = 0.4f;
     private float cbr = 0.4f;
+    private int lockPosition = 0;
     @Override
 
     public void runOpMode() throws InterruptedException {
@@ -41,10 +44,13 @@ public class TestTele extends LinearOpMode {
         FLMotor = hardwareMap.dcMotor.get("FL_Motor");
         BLMotor = hardwareMap.dcMotor.get("BL_Motor");
         BRMotor = hardwareMap.dcMotor.get("BR_Motor");
+        oneHang = hardwareMap.dcMotor.get("H1");
+        twoHang = hardwareMap.dcMotor.get("H2");
 
         Slide = hardwareMap.dcMotor.get("S_Motor");
         slide = hardwareMap.crservo.get("slide");
         sweep = hardwareMap.crservo.get("sweep");
+        specimen = hardwareMap.servo.get("specimen");
 
 
 //speeds
@@ -56,6 +62,8 @@ public class TestTele extends LinearOpMode {
         FRMotor.setDirection(DcMotor.Direction.REVERSE);
         BLMotor.setDirection(DcMotor.Direction.FORWARD);
         BRMotor.setDirection(DcMotor.Direction.REVERSE);
+        oneHang.setDirection(DcMotor.Direction.REVERSE);
+        twoHang.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -69,8 +77,8 @@ public class TestTele extends LinearOpMode {
 
         while (opModeIsActive()) {
             //slide.setPower(10);
-            DcMotor[] motors = {FRMotor, FLMotor, BLMotor, BRMotor/*,Slide*/};
-            for (int i = 0; i < 4; i++) {
+            DcMotor[] motors = {FRMotor, FLMotor, BLMotor, BRMotor/*,Slide*/, oneHang, twoHang};
+            for (int i = 0; i < 6; i++) {
                 motors[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                //   motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -118,46 +126,57 @@ public class TestTele extends LinearOpMode {
 
 
 //SLIDE**********************************************************************************************************************************
-            if(gamepad1.left_trigger>0.1)
+//            if(gamepad1.left_trigger>0.1)
+//            {
+//                Slide.setTargetPosition(-700);
+//                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                Slide.setPower(0.5);
+//                telemetry.addData("NO", Slide.getCurrentPosition());
+//                telemetry.update();
+//
+//            }
+            if(gamepad1.left_trigger>0.1)// floor
             {
-                Slide.setTargetPosition(-700);
-                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slide.setPower(0.5);
-                telemetry.addData("NO", Slide.getCurrentPosition());
-                telemetry.update();
-
-            }
-            if(gamepad1.right_trigger>0.1)
-            {
+                specimen.setPosition(1);
                 Slide.setTargetPosition(1050);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slide.setPower(0.3);
+                Slide.setPower(1.0);
                 telemetry.addData("NO", Slide.getCurrentPosition());
                 telemetry.update();
             }
 
 
 
-            if(gamepad1.left_bumper)
+//            if(gamepad1.left_bumper)
+//            {
+//                Slide.setTargetPosition(-1500);
+//                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                Slide.setPower(-0.5);
+//                telemetry.addData("NO", Slide.getCurrentPosition());
+//                telemetry.update();
+//                //Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//               // Slide.setPower(0);
+//
+//            }
+            if(gamepad1.right_trigger>0.1) //basket
             {
-                Slide.setTargetPosition(-1500);
+                specimen.setPosition(0);
+                Slide.setTargetPosition(-4500);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slide.setPower(-0.5);
-                telemetry.addData("NO", Slide.getCurrentPosition());
-                telemetry.update();
-                //Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-               // Slide.setPower(0);
 
-            }
-            if(gamepad1.right_bumper)
-            {
+                Slide.setPower(-1.0);
 
-                Slide.setTargetPosition(-3500);
-                Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Slide.setPower(-0.5);
                 //Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 // Slide.setPower(0);
 
+            }
+            if(gamepad1.dpad_down)
+            {                oneHang.setPower(0.5);
+            }
+            while (gamepad1.dpad_up/*&&oneHang.getCurrentPosition()>lockPosition*/)
+            {
+                oneHang.setPower(0.5);
+                twoHang.setPower(0.5);
             }
             //HORIZONTAL SLIDE***************************************************************************************************************
             while(gamepad1.y)
@@ -167,22 +186,30 @@ public class TestTele extends LinearOpMode {
             while(gamepad1.a)
             {
                 slide.setPower(-1);
-                sleep(500);
             }
+            if(gamepad1.dpad_left)
+            {
+                specimen.setPosition(0.14);
+            }
+            if(gamepad1.dpad_right)
+            {
+                specimen.setPosition(0.52);
+            }
+
             //SWEEPER**************************************************************************************************************************
             while(gamepad1.b)
             {
                 sweep.setPower(0.5);
-                telemetry.addData("hello", "hello");
+                telemetry.addData("sample", "dropped");
                 telemetry.update();
             }
             while(gamepad1.x)
             {
                 sweep.setPower(-0.5);
-                telemetry.addData("goodbye", "goodbye");
+                telemetry.addData("sample", "picked");
                 telemetry.update();
             }
-            while(gamepad1.dpad_up&&Slide.getCurrentPosition()>-4800)
+            while(gamepad1.right_bumper&&Slide.getCurrentPosition()>-46)//&&Slide.getCurrentPosition()>-4800
             {
                 Slide.setTargetPosition(Slide.getCurrentPosition()-100);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -190,7 +217,7 @@ public class TestTele extends LinearOpMode {
                 telemetry.addData("NO", Slide.getCurrentPosition());
                 telemetry.update();
             }
-            while(gamepad1.dpad_down)
+            while(gamepad1.left_bumper)
             {
                 Slide.setTargetPosition(Slide.getCurrentPosition()+100);
                 Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -207,19 +234,27 @@ public class TestTele extends LinearOpMode {
 //            BRMotor.setPower(0);
 
            // Slide.setPower(0);
-            if(!gamepad1.dpad_up&&!gamepad2.dpad_down)
+            if(!gamepad1.left_bumper&&!gamepad1.right_bumper)
             {
                 slide.setPower(0);
                 sweep.setPower(0);
 
             }
+            if(!gamepad1.dpad_up)
+            {
+                oneHang.setPower(0);
+                twoHang.setPower(0);
+            }
 
             //slide.setPower(0);
             //sweep.setPower(0   );
-            telemetry.addData("BR", BRMotor.getPower());
-            telemetry.addData("BL", BLMotor.getPower());
-            telemetry.addData("FR", FRMotor.getPower());
-            telemetry.addData("FL", FLMotor.getPower());
+            telemetry.addData("one- hang", oneHang.getCurrentPosition());
+            telemetry.addData("two- hang", twoHang.getCurrentPosition());
+//
+//            telemetry.addData("BR", BRMotor.getPower());
+//            telemetry.addData("BL", BLMotor.getPower());
+//            telemetry.addData("FR", FRMotor.getPower());
+//            telemetry.addData("FL", FLMotor.getPower());
             telemetry.addData("Slide", Slide.getCurrentPosition());
             telemetry.update();
         }

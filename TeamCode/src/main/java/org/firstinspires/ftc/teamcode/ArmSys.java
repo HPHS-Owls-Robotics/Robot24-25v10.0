@@ -52,7 +52,8 @@ public class ArmSys {
     }
     public void SlideToBasket()
     {
-        Slide(-3300,-0.5f);
+
+        Slide(-4500,-0.5f);
     }
     public void SlideDown()
     {

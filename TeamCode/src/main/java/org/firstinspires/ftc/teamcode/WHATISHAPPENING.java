@@ -30,18 +30,9 @@ public final class WHATISHAPPENING extends LinearOpMode {
         BRMotor.setDirection(DcMotor.Direction.REVERSE);
         waitForStart();
         if (opModeIsActive()) {
-
-            FLMotor.setTargetPosition(FLMotor.getCurrentPosition()+500);
-            FRMotor.setTargetPosition(FRMotor.getCurrentPosition()+500);
-            BRMotor.setTargetPosition(BRMotor.getCurrentPosition()+500);
-            BLMotor.setTargetPosition(BLMotor.getCurrentPosition()+500);
-            FLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            BLMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            FLMotor.setPower(0.5);
+            FLMotor.setPower(-0.5);
             FRMotor.setPower(0.5);
-            BRMotor.setPower(0.5);
+            BRMotor.setPower(-0.5);
             BLMotor.setPower(0.5);
         }
 
